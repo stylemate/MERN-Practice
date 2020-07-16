@@ -1,4 +1,0 @@
-{
-  "mongoURI": "mongodb+srv://admin:KiZ4GJNafxqjpIvm@mern.rcdyb.gcp.mongodb.net/test?retryWrites=true&w=majority",
-  "jwtSecret": "operationcwal"
-}
