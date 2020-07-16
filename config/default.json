@@ -1,3 +1,4 @@
 {
-    "mongoURI" : "mongodb+srv://admin:29K9pjCZfQjTa7R7@mern.rcdyb.gcp.mongodb.net/test?retryWrites=true&w=majority"
+  "mongoURI": "mongodb+srv://admin:29K9pjCZfQjTa7R7@mern.rcdyb.gcp.mongodb.net/test?retryWrites=true&w=majority",
+  "jwtSecret": "poweroverwhelming"
 }
