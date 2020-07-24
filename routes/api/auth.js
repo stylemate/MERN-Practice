@@ -8,7 +8,7 @@ const config = require("config");
 const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 
-//pass middleware just like that
+//pass middleware in the 'middle' of the arguments.
 router.get("/", auth, async (req, res) => {
   //   res.send("Auth route");
   try {
@@ -23,7 +23,7 @@ router.get("/", auth, async (req, res) => {
 //authenticate user and get token
 router.post(
   "/",
-  [
+  [ //the second argument is custom error message
     check("email", "Please include a valid email").isEmail(),
     check("password", "Password is required").exists(),
   ],
