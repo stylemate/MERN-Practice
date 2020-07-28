@@ -120,7 +120,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// @route   GET api/profile/user/{user_id}
+// @route   GET api/profile/user/:user_id
 // @desc    GET a profile by user ID
 // @acess   Public
 router.get("/user/:user_id", async (req, res) => {
@@ -147,15 +147,72 @@ router.delete("/", auth, async (req, res) => {
     //removing posts not implemented yet
 
     //removes profile
-    await Profile.findOneAndRemove({ user: req.user.id});
+    await Profile.findOneAndRemove({ user: req.user.id });
     //removes user
-    await User.findOneAndRemove({ _id: req.user.id});
-    
-    res.json({msg: 'Deleted'});
+    await User.findOneAndRemove({ _id: req.user.id });
+
+    res.json({ msg: "Deleted" });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
   }
 });
 
+// @route   PUT api/profile/experience
+// @desc    Add profile experience
+// @acess   Private
+
+router.put(
+  "/experience",
+  [
+    auth,
+    [
+      check("title", "Title is required").not().isEmpty(),
+      check("company", "Company is required").not().isEmpty(),
+      check("from", "From date is required").not().isEmpty(),
+    ],
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    //descontruct
+    const {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description,
+    } = req.body;
+
+    const newExp = {
+      //title: title    same thing
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description,
+    };
+
+    //@todo come up with updating experience solution
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      profile.experience.unshift(newExp);
+
+      await profile.save();
+
+      res.json(profile);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
 module.exports = router;
