@@ -6,9 +6,9 @@ const { check, validationResult } = require("express-validator");
 const User = require("../../models/User");
 const Profile = require("../../models/Profile");
 
-// @route GET api/proilfe/me
-// @desc Get current user's profile
-// @acess Private
+// @route   GET api/proilfe/me
+// @desc    Get current user's profile
+// @acess   Private
 router.get("/me", auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({
@@ -26,9 +26,9 @@ router.get("/me", auth, async (req, res) => {
   }
 });
 
-// @route POST api/proilfe/me
-// @desc Create or Update user profile
-// @acess Private
+// @route   POST api/proilfe/me
+// @desc    Create or Update user profile
+// @acess   Private
 
 router.post(
   "/",
@@ -90,7 +90,7 @@ router.post(
           { $set: profileFields },
           { new: true }
         );
-        console.log('updated');
+        // console.log('updated');
         return res.json(profile);
       }
 
@@ -98,13 +98,45 @@ router.post(
       profile = new Profile(profileFields);
 
       await profile.save();
-      console.log('created');
-      res.json(profile); 
+      // console.log('created');
+      res.json(profile);
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
     }
   }
 );
+
+// @route   GET api/profile/
+// @desc    GET all profiles
+// @acess   Public
+router.get("/", async (req, res) => {
+  try {
+    const profiles = await Profile.find().populate("user", ["name", "avatar"]);
+    res.json(profiles);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   GET api/profile/user/{user_id}
+// @desc    GET a profile by user ID
+// @acess   Public
+router.get("/user/:user_id", async (req, res) => {
+  try {
+    const profile = await Profile.findOne({
+      user: req.params.user_id,
+    }).populate("user", ["name", "avatar"]);
+    if (!profile) return res.status(400).json({ msg: "Profile not found" });
+    res.json(profile);
+  } catch (error) {
+    console.error(error.message);
+    if (error.kind == "ObjectId") {
+      return res.status(400).json({ msg: "Profile not found" });
+    }
+    res.status(500).send("Server Error");
+  }
+});
 
 module.exports = router;
