@@ -23,7 +23,8 @@ router.get("/", auth, async (req, res) => {
 //authenticate user and get token
 router.post(
   "/",
-  [ //the second argument is custom error message
+  [
+    //the second argument is custom error message
     check("email", "Please include a valid email").isEmail(),
     check("password", "Password is required").exists(),
   ],
@@ -57,6 +58,7 @@ router.post(
       const payload = {
         user: {
           id: user.id,
+          name: user.name,
         },
       };
 
